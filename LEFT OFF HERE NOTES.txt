@@ -1,0 +1,27 @@
+LEFT OFF:
+
+10/25/2020
+BandNumber is in table user_Maintenance!
+
+Scripted Equine Pro db's stored procs, views and user functions.
+Ran create scripts against Equieplus db
+Copied Errors into "EP SP_VW_andFunctions.sql comments 
+
+10/24/2020
+Added .gitignore Generator to vscode
+Added GitLens to vscode
+(already had:
+ Debugger for MS Edge
+ HTML CSS Support
+ HTML Preview
+ HTMLHint
+ Intellisense for CSS class names
+ open-in-browser
+ SQL Formatter
+ SQL Server (mssql)
+Create GitHub repository Equineplus
+Created VSCode\Equineplus project folder with subfolders for sql scripts
+Created .gitignore file in project root
+Create Local Git repository
+Moved repository to GitHub
+
