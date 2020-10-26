@@ -1,6 +1,8 @@
 LEFT OFF:
 
 10/25/2020
+BandNumber is in table user_Maintenance!
+
 Scripted Equine Pro db's stored procs, views and user functions.
 Ran create scripts against Equieplus db
 Copied Errors into "EP SP_VW_andFunctions.sql comments 
