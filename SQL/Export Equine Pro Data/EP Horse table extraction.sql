@@ -1,12 +1,12 @@
 /*
 
 Looks like user_Horse has more recent HorseName and gets timestamped on update in Equine Pro
-
+BandNumber is in user_Maintenance, might need to see stored proc gets for each page of EQuine Pro app
 
 select count(*) From temp_Horses = 43503
 select count(*) From user_Horse = 25302
 
-SELECT COUNT(*)/* u.HorseName AS user_Horse, t.HorseName AS temp_Horse */
+SELECT COUNT(*) -- u.HorseName AS user_Horse, t.HorseName AS temp_Horse
 FROM user_horse u
 LEFT OUTER JOIN temp_Horses t ON t.HorseID = u.HorseID
 WHERE t.HorseID is null
@@ -28,31 +28,26 @@ Need to figure out what the most up to date way to get local code is, look at di
 */
 
 SELECT u.HorseName AS HorseName
-, t.BandNumber
+, m.BandNumber
 , u.RegistrationNumber AS user_RegistrationNumber
-, t.RegistrationNumber AS temp_RegistrationNumber
-, t.Local
-, t.Location
-, u.LocalID	
 , lc.LookupDescription
 , lc.LookupAbrv
-
 , sire.HorseName AS SireName
+, sire.RegistrationNumber AS SireRegNo
 , u.SireID
 , dam.HorseName AS DamName
+, dam.RegistrationNumber AS DamRegNo
 , u.DamID
-
 , u.HorseID AS LegacyHorseID
-, t.HorseName AS LegacyPreviousHorseName
 , CONVERT(NVARCHAR(50), u.HorseID) AS Legacy_HorseIDString
 , u.UpdateUser AS Legacy_UpdateUser
 , u.UpdateTimestamp AS Legacy_UpdateTimestamp
 
 FROM user_horse u
-INNER JOIN temp_Horses t ON t.HorseID = u.HorseID
+LEFT OUTER JOIN user_Maintenance m ON m.HorseID = u.HorseID
+LEFT OUTER JOIN base_Lookup lc ON lc.LookupID = u.LocalID
 LEFT OUTER JOIN user_Horse sire ON sire.HorseID = u.SireID
 LEFT OUTER JOIN user_Horse dam ON dam.HorseID = u.DamID
-LEFT OUTER JOIN base_Lookup lc ON lc.LookupID = u.LocalID AND lc.LookupSetID = '506C0E43-4548-46C6-9BB7-09643EE23188'
 
 WHERE u.HorseName LIKE '%Prevue%'
 
