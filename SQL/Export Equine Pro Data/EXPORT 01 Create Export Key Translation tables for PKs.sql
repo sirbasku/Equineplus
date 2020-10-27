@@ -149,14 +149,55 @@ INSERT INTO transKey_base_HorseColor (GUID_HorseColorID, HorseColorName)
 SELECT l.LookupID, l.LookupDescription
 FROM base_Lookup l
 INNER JOIN base_LookupSet ls ON ls.LookupSetID = l.LookupSetID
-WHERE ls.LookupSetDescription = 'Color'
+
+INSERT INTO transKey_base_LocalCode (GUID_LocalCodeID, LocalCodeName)
+SELECT l.LookupID, l.LookupDescription
+FROM base_Lookup l
+INNER JOIN base_LookupSet ls ON ls.LookupSetID = l.LookupSetID
+WHERE ls.LookupSetDescription = 'Local Code'
+
+INSERT INTO
+	transKey_base_Strain(GUID_TrackingColorID, ColorName)
+SELECT
+	l.LookupID,
+	l.LookupDescription
+FROM
+	base_Lookup l
+	INNER JOIN base_LookupSet ls ON ls.LookupSetID = l.LookupSetID
+WHERE
+	ls.LookupSetDescription = 'Tracking Color'
+
+--Fix color names
+UPDATE transKey_base_Strain
+SET ColorName = 'Purple'
+WHERE ColorName = 'Violet (Dark Blue)'
+
+UPDATE transKey_base_Strain
+SET ColorName = 'Blue'
+WHERE ColorName = 'Cyan (Blue)'
+
+UPDATE transKey_base_Strain
+SET ColorName = 'Red'
+WHERE ColorName = 'Magenta (Red)'
+
+-- Assign Masculine and Feminine names to colors
+UPDATE transKey_base_Strain
+SET MasculineStrainName = 'Abbeyan Umm Jurays'
+, FeminineStrainName = 'Abbeyah Umm Jurays'
+WHERE INT_StrainID = 1
+
 
 */
+NEED TO ADD ENTRIES FOR RED ABCD and BLACK AB not just the single colors...
+UPDATE transKey_base_Strain
+SET MasculineStrainName = 'Abbeyan Umm Jurays'
+, FeminineStrainName = 'Abbeyah Umm Jurays'
+WHERE INT_StrainID = 4
 
-select h.HorseName, l.LookupDescription AS HorseColor
-from user_Horse h
-inner join base_lookup l on l.LookupID = h.ColorID
-where HorseName LIKE '%duck%'
+select *
+FROM transKey_base_Strain
+
+
 
 
 
