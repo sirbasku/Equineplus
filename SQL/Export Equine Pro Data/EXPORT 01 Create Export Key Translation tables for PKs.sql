@@ -571,4 +571,54 @@ CREATE TABLE [dbo].[export_Client](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
+
+SET IDENTITY_INSERT export_Client ON
+GO
+INSERT INTO export_Client
+(
+	ClientID
+	,ClientCode
+	,FirstName
+	,LastName
+	,Company
+	,Address1
+	,Address2
+	,City
+	,StateID
+	,Zip
+	,CountryID
+	,Phone1
+	,Phone2
+	,Fax 
+	,LastBalanceDue
+	,Notes
+	,UpdateUser
+	,UpdateTimestamp
+)
+SELECT 
+	k.INT_ClientID AS ClientID    --Get Int ID from transKey
+	-- Rest from user files
+	,cl.ClientCode
+	,con.FirstName
+	,con.Name AS LastName
+	,con.Company
+	,con.Address1
+	,con.Address2
+	,con.City
+	,state.INT_StateID
+	,con.Zip
+	,country.INT_CountryID
+	,con.Phone1
+	,con.Phone2
+	,con.Fax
+	,cl.TransCurrent+cl.TransPeriod1+cl.TransPeriod2+cl.TransPeriod3 AS LastBalanceDue
+	,TRIM(TRIM(CONVERT(VARCHAR(8000), SUBSTRING(ISNULL(cl.Notes,''), 1, 8000))) + ' ' + TRIM(CONVERT(VARCHAR(8000), SUBSTRING(ISNULL(cl.Comments, ''), 1, 8000))) + ' ' + TRIM(CONVERT(VARCHAR(8000), SUBSTRING(ISNULL(con.HorseNotes, ''), 1, 8000)))) AS Notes 
+	,cl.UpdateUser
+	,cl.UpdateTimestamp
+FROM transKey_Client k
+INNER JOIN user_Client cl ON cl.ClientID = k.GUID_ClientID
+LEFT OUTER JOIN user_Contact con ON con.ContactID = cl.ContactID
+LEFT OUTER JOIN transKey_base_State state ON state.GUID_StateID = con.StateID
+LEFT OUTER JOIN transKey_base_Country country ON country.GUID_CountryID = con.CountryID
 */
+
