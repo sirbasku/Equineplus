@@ -1,5 +1,68 @@
 LEFT OFF:
+10/28/2020
+For each PK Table to export, create a keyTrans_TABLENAME table with: 
+    a GUID ID field from Source table PK (Make Unique) 
+    an INT ID field to use as PK in Target table (ID auto increment) 
+    a Name field to aid in identifying the keys in queries 
 
+Insert Into transKey_TABLENAME the GUID ID, auto identity an INT ID, and Name field 
+
+transKey_base_Gender for GenderID GUID 
+transKey_base_HorseColor for ColorID GUID 
+transKey_base_HorseBreed 
+transKey_base_Strain (Get best matches from Data1 like '%xxx%' and leave rest null) 
+transKey_base_LocalCode 
+transKey_base_State 
+transKey_base_Country 
+
+transKey_Horse for HorseID GUID 
+transKey_Contact 
+transKey_Client 
+transKey_Boarding 
+transKey_ServiceType 
+transKey_Service 
+transKey_Breeding 
+
+export_base_Gender 
+export_base_HorseBreed 
+export_base_HorseColor 
+export_base_Strain 
+export_base_LocalCode 
+export_base_State 
+export_base_Country 
+
+--skip export_Contact for now, just add the primary contact fields to the client record in export 
+export_Client 
+
+** LEFT OFF HERE , tables below are created now populating the transKey's 
+
+** Then make these and populate from trans tables 
+
+export_Horse 
+    add ClientID FK
+    add BreedID FK
+    add StrainID FK
+    add legacy fields like DataX TitleX 
+
+export_Boarding 
+export_Service 
+export_Breeding 
+
+*** Then create in target system 
+
+Base_ tables 
+Entity tables 
+Views for reports 
+Stored procs for actions 
+
+*** Add new table for Arrival Departures 
+
+**Once this is done no changes can be retransferred unless clear all transTables and start over or implement a mechanism to not select records already added to the trans table.  
+
+Figure out Breeding Procs 
+Figure out if Want to make one "Charges file and allow user to see all/Vet/Farrier/Misc (?Boarding Charge?) or if want separate.  Probably depends on how easy the subform control is depending on whether ZoHo or JavaScript... 
+
+------------------------------------------------------------------------------
 10/28/2020
 See Onenote export notes
 Just created and populated export_base tables

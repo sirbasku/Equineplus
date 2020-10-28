@@ -571,7 +571,6 @@ CREATE TABLE [dbo].[export_Client](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-
 SET IDENTITY_INSERT export_Client ON
 GO
 INSERT INTO export_Client
@@ -620,5 +619,6 @@ INNER JOIN user_Client cl ON cl.ClientID = k.GUID_ClientID
 LEFT OUTER JOIN user_Contact con ON con.ContactID = cl.ContactID
 LEFT OUTER JOIN transKey_base_State state ON state.GUID_StateID = con.StateID
 LEFT OUTER JOIN transKey_base_Country country ON country.GUID_CountryID = con.CountryID
+
 */
 
