@@ -622,3 +622,28 @@ LEFT OUTER JOIN transKey_base_Country country ON country.GUID_CountryID = con.Co
 
 */
 
+SELECT k.INT_HorseID AS HorseID
+-- From Source Tables
+	,h.HorseName
+	,h.RegistrationNumber
+	,klc.INT_LocalCodeID AS LocalCodeID
+	,h.Title1 AS Alert1
+	,h.Title2 AS Alert2
+	,h.Data1 AS legacy_Data1
+	,h.Data2 AS legacy_Data2
+	,TRIM(ISNULL(h.Comment,'')) + ' ' + TRIM(CONVERT(VARCHAR(8000), SUBSTRING(ISNULL(h.Comments,''), 1, 8000))) AS Comments
+	,khc.INT_HorseColorID AS HorseColorID
+	,kg.INT_GenderID AS GenderID
+	,h.DateBorn AS FoalDate
+	,h.DateDeceased AS DateDeceased
+	,sire.INT_HorseID AS SireID
+	,dam.INT_HorseID AS DamID
+
+
+FROM transKey_Horse k
+INNER JOIN user_Horse h ON H.HorseID = k.GUID_HorseID
+LEFT OUTER JOIN transKey_base_LocalCode klc ON klc.GUID_LocalCodeID = h.LocalID
+LEFT OUTER JOIN transKey_base_HorseColor khc ON khc.GUID_HorseColorID = h.ColorID
+LEFT OUTER JOIN transKey_base_Gender kg ON kg.GUID_GenderID = h.GenderID
+LEFT OUTER JOIN transKey_Horse sire ON sire.GUID_HorseID = h.SireID
+LEFT OUTER JOIN transKey_Horse dam ON dam.GUID_HorseID = h.DamID

@@ -36,8 +36,6 @@ export_Client
 
 ** LEFT OFF HERE , tables below are created now populating the transKey's 
 
-** Then make these and populate from trans tables 
-
 export_Horse 
     add ClientID FK
     add BreedID FK
