@@ -1,5 +1,10 @@
 LEFT OFF:
 
+10/28/2020
+See Onenote export notes
+Just created and populated export_base tables
+About to create and populate export main entity tables (Horse Client, etc)
+
 10/25/2020
 BandNumber is in table user_Maintenance!
 
