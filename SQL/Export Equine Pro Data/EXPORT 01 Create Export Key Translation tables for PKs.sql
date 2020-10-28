@@ -283,10 +283,136 @@ FROM user_Breeding b
 INNER JOIN user_Horse sire ON sire.HorseID = b.StallionID
 INNER JOIN user_Horse dam ON dam.HorseID = b.HorseID
 
+--Create export tables
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[export_base_Gender](
+	[GenderID] [int] IDENTITY(1,1) NOT NULL,
+	[GenderName] [nvarchar](50) NOT NULL,
+	[SortOrder] [int] NOT NULL
+) ON [PRIMARY]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[export_base_HorseColor](
+	[HorseColorID] [int] IDENTITY(1,1) NOT NULL,
+	[HorseColorName] [nvarchar](50) NOT NULL,
+	[SortOrder] [int] NOT NULL
+) ON [PRIMARY]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[export_base_HorseBreed](
+	[HorseBreedID] [int] IDENTITY(1,1) NOT NULL,
+	[HorseBreedName] [nvarchar](50) NOT NULL,
+	[SortOrder] [int] NOT NULL
+) ON [PRIMARY]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[export_base_Strain](
+	[StrainID] [int] IDENTITY(1,1) NOT NULL,
+	[StrainCode] [nvarchar](10) NOT NULL,
+	[StrainTrackingColor] [nvarchar](10) NULL,
+	[StrainMasculineName] [nvarchar](50) NOT NULL,
+	[StrainFeminineName] [nvarchar](50) NOT NULL,
+	[SortOrder] [int] NOT NULL
+) ON [PRIMARY]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[export_base_LocalCode](
+	[LocalCodeID] [int] IDENTITY(1,1) NOT NULL,
+	[LocalCodeName] [nvarchar](50) NOT NULL,
+	[SortOrder] [int] NOT NULL
+) ON [PRIMARY]
+GO
+
+SET ANSI_NULLS ON
+GO
+--Allow insert of int PKs from trans tables into int PK field
+SET IDENTITY_INSERT export_base_Gender ON
+GO
+INSERT INTO export_base_Gender (GenderID, GenderName, SortOrder)
+SELECT trans.INT_GenderID AS GenderID --Get int ID from trans table
+--Get rest from source table(s)
+, l.LookupDescription AS GenderName
+, l.LookupSequence AS SortOrder
+--trans table:
+FROM transKey_base_Gender trans 
+--source table:
+INNER JOIN base_Lookup l ON l.LookupID = trans.GUID_GenderID
+GO
+
+SET ANSI_NULLS ON
+GO
+--Allow insert of int PKs from trans tables into int PK field
+SET IDENTITY_INSERT export_base_HorseBreed ON
+GO
+INSERT INTO export_base_HorseBreed (HorseBreedID, HorseBreedName, SortOrder)
+SELECT trans.HorseBreedID 
+,trans.HorseBreedName
+, trans.SortOrder
+FROM transKey_base_HorseBreed trans 
+
+SET ANSI_NULLS ON
+GO
+--Allow insert of int PKs from trans tables into int PK field
+SET IDENTITY_INSERT export_base_HorseColor ON
+GO
+INSERT INTO export_base_HorseColor (HorseColorID, HorseColorName, SortOrder)
+SELECT trans.INT_HorseColorID AS GenderID --Get int ID from trans table
+--Get rest from source table(s)
+, l.LookupDescription AS GenderName
+, l.LookupSequence AS SortOrder
+--trans table:
+FROM transKey_base_HorseColor trans 
+--source table:
+INNER JOIN base_Lookup l ON l.LookupID = trans.GUID_HorseColorID
+GO
+
+SET ANSI_NULLS ON
+GO
+--Allow insert of int PKs from trans tables into int PK field
+SET IDENTITY_INSERT export_base_Strain ON
+GO
+INSERT INTO export_base_Strain (StrainID, StrainCode, StrainTrackingColor, StrainMasculineName, StrainFeminineName, SortOrder)
+SELECT StrainID, StrainCode, StrainTrackingColor, StrainMasculineName, StrainFeminineName, StrainID AS SortOrder
+FROM transKey_base_Strain
+GO
+
+SET ANSI_NULLS ON
+GO
+--Allow insert of int PKs from trans tables into int PK field
+SET IDENTITY_INSERT export_base_LocalCode ON
+GO
+INSERT INTO export_base_LocalCode (LocalCodeID, LocalCodeName, SortOrder)
+SELECT trans.INT_LocalCodeID AS LocalCodeID --Get int ID from trans table
+--Get rest from source table(s)
+, l.LookupDescription AS LocalCodeName
+, l.LookupSequence AS SortOrder
+--trans table:
+FROM transKey_base_LocalCode trans 
+--source table:
+INNER JOIN base_Lookup l ON l.LookupID = trans.GUID_LocalCodeID
+GO
+
 */
-
-
-
 
 
 
