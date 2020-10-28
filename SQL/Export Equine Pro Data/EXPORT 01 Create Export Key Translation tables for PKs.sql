@@ -292,7 +292,11 @@ GO
 CREATE TABLE [dbo].[export_base_Gender](
 	[GenderID] [int] IDENTITY(1,1) NOT NULL,
 	[GenderName] [nvarchar](50) NOT NULL,
-	[SortOrder] [int] NOT NULL
+	[SortOrder] [int] NOT NULL,
+ CONSTRAINT [PK_export_base_Gender] PRIMARY KEY CLUSTERED 
+(
+	[GenderID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
 
@@ -303,7 +307,11 @@ GO
 CREATE TABLE [dbo].[export_base_HorseColor](
 	[HorseColorID] [int] IDENTITY(1,1) NOT NULL,
 	[HorseColorName] [nvarchar](50) NOT NULL,
-	[SortOrder] [int] NOT NULL
+	[SortOrder] [int] NOT NULL,
+ CONSTRAINT [PK_export_base_HorseColor] PRIMARY KEY CLUSTERED 
+(
+	[HorseColorID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
 
@@ -314,7 +322,11 @@ GO
 CREATE TABLE [dbo].[export_base_HorseBreed](
 	[HorseBreedID] [int] IDENTITY(1,1) NOT NULL,
 	[HorseBreedName] [nvarchar](50) NOT NULL,
-	[SortOrder] [int] NOT NULL
+	[SortOrder] [int] NOT NULL,
+ CONSTRAINT [PK_export_base_HorseBreed] PRIMARY KEY CLUSTERED 
+(
+	[HorseBreedID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
 
@@ -328,7 +340,11 @@ CREATE TABLE [dbo].[export_base_Strain](
 	[StrainTrackingColor] [nvarchar](10) NULL,
 	[StrainMasculineName] [nvarchar](50) NOT NULL,
 	[StrainFeminineName] [nvarchar](50) NOT NULL,
-	[SortOrder] [int] NOT NULL
+	[SortOrder] [int] NOT NULL,
+ CONSTRAINT [PK_export_base_Strain] PRIMARY KEY CLUSTERED 
+(
+	[StrainID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
 
@@ -339,9 +355,14 @@ GO
 CREATE TABLE [dbo].[export_base_LocalCode](
 	[LocalCodeID] [int] IDENTITY(1,1) NOT NULL,
 	[LocalCodeName] [nvarchar](50) NOT NULL,
-	[SortOrder] [int] NOT NULL
+	[SortOrder] [int] NOT NULL,
+ CONSTRAINT [PK_export_base_LocalCode] PRIMARY KEY CLUSTERED 
+(
+	[LocalCodeID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+
 
 SET ANSI_NULLS ON
 GO
@@ -412,7 +433,142 @@ FROM transKey_base_LocalCode trans
 INNER JOIN base_Lookup l ON l.LookupID = trans.GUID_LocalCodeID
 GO
 
+--export_Client with Primary Contact fields embedded
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[transKey_base_State](
+	[GUID_StateID] [uniqueidentifier] NOT NULL,
+	[INT_StateID] [int] IDENTITY(1,1) NOT NULL,
+	[StateName] [nvarchar](50) NULL,
+	[StateAbrv] [nvarchar](10) NULL,
+	[SortOrder] [int] NULL,
+ CONSTRAINT [PK_transKey_base_State] PRIMARY KEY CLUSTERED 
+(
+	[GUID_StateID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+INSERT INTO transKey_base_State (GUID_StateID, StateName, StateAbrv, SortOrder)
+SELECT [LookupID] AS GUID_StateID 
+      ,[LookupDescription] AS StateName 
+      ,[LookupAbrv] AS StateAbrv 
+      ,[LookupSequence] AS SortOrder 
+  FROM [dbo].[base_Lookup] l 
+  inner join base_lookupset ls on ls.lookupsetid = l.lookupsetid 
+  where ls.lookupsetdescription = 'States' 
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[export_base_State](
+	[StateID] [int] IDENTITY(1,1) NOT NULL,
+	[StateName] [nvarchar](50) NOT NULL,
+	[StateAbrv] [nvarchar](10) NULL,
+	[SortOrder] [int] NOT NULL,
+ CONSTRAINT [PK_export_base_State] PRIMARY KEY CLUSTERED 
+(
+	[StateID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+--Allow insert of int PKs from trans tables into int PK field
+SET IDENTITY_INSERT export_base_State ON
+GO
+INSERT INTO export_base_State (StateID, StateName, StateAbrv, SortOrder)
+SELECT [INT_StateID] AS StateID
+      ,[StateName]
+      ,[StateAbrv]
+      ,[SortOrder]
+  FROM [dbo].[transKey_base_State]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[transKey_base_Country](
+	[GUID_CountryID] [uniqueidentifier] NOT NULL,
+	[INT_CountryID] [int] IDENTITY(1,1) NOT NULL,
+	[CountryName] [nvarchar](50) NOT NULL,
+	[SortOrder] [int] NOT NULL,
+ CONSTRAINT [PK_transKey_base_Country] PRIMARY KEY CLUSTERED 
+(
+	[GUID_CountryID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+INSERT INTO transKey_base_Country (GUID_CountryID, CountryName, SortOrder)
+SELECT [LookupID] AS GUID_CountryID 
+      ,[LookupDescription] AS CountryName 
+      ,[LookupSequence] AS SortOrder 
+  FROM [dbo].[base_Lookup] l 
+  inner join base_lookupset ls on ls.lookupsetid = l.lookupsetid 
+  where ls.lookupsetdescription = 'Countries' 
+  order by LookupSequence
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[export_base_Country](
+	[CountryID] [int] IDENTITY(1,1) NOT NULL,
+	[CountryName] [nvarchar](50) NOT NULL,
+	[SortOrder] [int] NOT NULL,
+ CONSTRAINT [PK_export_base_Country] PRIMARY KEY CLUSTERED 
+(
+	[CountryID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+--Allow insert of int PKs from trans tables into int PK field
+SET IDENTITY_INSERT export_base_Country ON
+GO
+INSERT INTO export_base_Country (CountryID, CountryName, SortOrder)
+SELECT 
+      [INT_CountryID] AS CountryID
+      ,[CountryName]
+      ,[SortOrder]
+  FROM [dbo].[transKey_base_Country]
+  ORDER BY SortOrder
+
+CREATE TABLE [dbo].[export_Client](
+	[ClientID] [int] IDENTITY(1,1) NOT NULL,
+	[ClientCode] [nvarchar](10) NULL,
+	[FirstName] [nvarchar](50) NULL,
+	[LastName] [nvarchar](50) NULL,
+	[Company] [nvarchar](50) NULL,
+	[Address1] [nvarchar](50) NULL,
+	[Address2] [nvarchar](50) NULL,
+	[City] [nvarchar](50) NULL,
+	[StateID] [int] NULL,
+	[Zip] [nvarchar](20) NULL,
+	[CountryID] [int] NULL,
+	[Phone1] [nvarchar](25) NULL,
+	[Phone2] [nvarchar](25) NULL,
+	[Fax] [nvarchar](25) NULL,
+	[LastBalanceDue] [money] NULL,
+	[Notes] [ntext] NULL,
+	[UpdateUser] [nvarchar](120) NULL,
+	[UpdateTimestamp] [datetime] NULL,
+ CONSTRAINT [PK_export_Client] PRIMARY KEY CLUSTERED 
+(
+	[ClientID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
 */
-
-
-
