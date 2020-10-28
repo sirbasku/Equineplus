@@ -33,15 +33,26 @@ CREATE TABLE [dbo].[transKey_base_HorseColor](
 ) ON [PRIMARY]
 GO
 
+CREATE TABLE [dbo].[transKey_base_HorseBreed](
+	[HorseBreedID] [int] IDENTITY(1,1) NOT NULL,
+	[HorseBreedName] nvarchar(50) NOT NULL,
+	[SortOrder] [int] NOT NULL
+ CONSTRAINT [PK_transKey_base_HorseBreed] PRIMARY KEY CLUSTERED 
+(
+	[HorseBreedID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
 CREATE TABLE [dbo].[transKey_base_Strain](
-	[GUID_TrackingColorID] [uniqueidentifier] NOT NULL,
-	[INT_StrainID] [int] IDENTITY(1,1) NOT NULL,
-	[ColorName] [nvarchar](50) NULL,
-	[MasculineStrainName] [nvarchar](50) NULL,
-	[FeminineStrainName] [nvarchar](50) NULL,
+	[StrainID] [int] IDENTITY(1,1) NOT NULL,
+	[StrainCode] nvarchar(10) NOT NULL,
+	[StrainTrackingColor] [nvarchar](50) NULL,
+	[StrainMasculineName] [nvarchar](50) NULL,
+	[StrainFeminineName] [nvarchar](50) NULL,
  CONSTRAINT [PK_transKey_base_Strain] PRIMARY KEY CLUSTERED 
 (
-	[GUID_TrackingColorID] ASC
+	[StrainID] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -71,22 +82,11 @@ GO
 CREATE TABLE [dbo].[transKey_Client](
 	[GUID_ClientID] [uniqueidentifier] NOT NULL,
 	[INT_ClientID] [int] IDENTITY(1,1) NOT NULL,
-	[ClientName] [nchar](50) NULL,
+	[ClientCode] [nvarchar](6) NULL,
  CONSTRAINT [PK_transKey_Client] PRIMARY KEY CLUSTERED 
 (
 	[GUID_ClientID] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-CREATE TABLE [dbo].[transKey_base_HorseBreed](
-	[HorseBreedName] [nvarchar](50) NOT NULL,
-	[INT_HorseBreedID] [int] IDENTITY(1,1) NOT NULL,
-
- CONSTRAINT [PK_transKey_base_HorseBreed] PRIMARY KEY CLUSTERED 
-(
-	[HorseBreedName] ASC
-)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
 
@@ -150,53 +150,140 @@ SELECT l.LookupID, l.LookupDescription
 FROM base_Lookup l
 INNER JOIN base_LookupSet ls ON ls.LookupSetID = l.LookupSetID
 
+INSERT INTO transKey_base_HorseBreed
+(HorseBreedName, SortOrder)
+VALUES
+	('Straight Egyptian',
+	1),
+	('American Saddlebred',
+	2),
+	('Anglo Arabian',
+	3),
+	('Arabian',
+	4),
+	('Draft',
+	5),
+	('Egyptian Related',
+	6),
+	('Egyptian Sired',
+	7),
+	('Grade',
+	8),
+	('Gypsy Vanner',
+	9),
+	('Half Arabian',
+	10),
+	('Mustang',
+	11),
+	('National Show Horse',
+	12),
+	('Other',
+	13),
+	('Paint',
+	14),
+	('Quarter Horse',
+	15),
+	('Spotted Saddle Horse',
+	16),
+	('Tennessee Walker',
+	17),
+	('Thoroughbred',
+	18),
+	('Warmblood',
+	19)
+
+INSERT INTO transKey_base_Strain 
+(StrainCode, StrainTrackingColor, StrainMasculineName, StrainFeminineName)
+VALUES
+	('1A',
+	'Red',
+	'Kuhaylan Ajuz (Rodan)',
+	'Kuhaylah Ajuz (Rodan)'),
+	('1B',
+	'Red',
+	'Kuhaylan',
+	'Kuhaylah'),
+	('1C',
+	'Red',
+	'Kuhaylan Jellabi',
+	'Kuhaylah Jellabiyah'),
+	('1D',
+	'Red',
+	'Kuhaylan Kurush',
+	'Kuhaylah Kurush'),
+	('2A',
+	'Blue',
+	'Dahman Shahwan',
+	'Dahmah Shahwaniyak'),
+	('3A',
+	'Purple',
+	'Abbeyan Umm Jurays',
+	'Abbeyah Umm Jurays'),
+	('5A',
+	'Orange',
+	'Saqlawi Jidran',
+	'Saqlawi Jidraniyah'),
+	('6A',
+	'Green',
+	'Hadban Enzahi',
+	'Hadbah Enzahiyah'),
+	('7A',
+	'Black',
+	'Shuweyman Sabban',
+	'Shuweymah Sabbah'),
+	('7B',
+	'Black',
+	'Hamdani Simri',
+	'Hamdani Simriyah')
+
+
 INSERT INTO transKey_base_LocalCode (GUID_LocalCodeID, LocalCodeName)
 SELECT l.LookupID, l.LookupDescription
 FROM base_Lookup l
 INNER JOIN base_LookupSet ls ON ls.LookupSetID = l.LookupSetID
 WHERE ls.LookupSetDescription = 'Local Code'
 
-INSERT INTO
-	transKey_base_Strain(GUID_TrackingColorID, ColorName)
-SELECT
-	l.LookupID,
-	l.LookupDescription
-FROM
-	base_Lookup l
-	INNER JOIN base_LookupSet ls ON ls.LookupSetID = l.LookupSetID
-WHERE
-	ls.LookupSetDescription = 'Tracking Color'
+INSERT INTO transKey_Contact (GUID_ContactID, ContactName)
+SELECT ContactID, ISNULL(FirstName, '') + ' ' + ISNULL(Name, '')
+FROM user_Contact
+	
+INSERT INTO transKey_Client (GUID_ClientID, ClientCode)
+SELECT ClientID, ClientCode
+FROM user_Client
 
---Fix color names
-UPDATE transKey_base_Strain
-SET ColorName = 'Purple'
-WHERE ColorName = 'Violet (Dark Blue)'
+--transKey_Boarding
+INSERT INTO transKey_Boarding (GUID_BoardingID, BoardingName)
+SELECT b.BoardingID, h.HorseName
+FROM user_MaintenanceBoarding b
+INNER JOIN user_Horse h ON h.HorseID = b.HorseID
 
-UPDATE transKey_base_Strain
-SET ColorName = 'Blue'
-WHERE ColorName = 'Cyan (Blue)'
+--transKey_ServiceType
+INSERT INTO transKey_base_ServiceType (GUID_ServiceTypeID, ServiceTypeName)
+SELECT l.[LookupID]
+      ,l.[LookupDescription]
+  FROM [dbo].[base_Lookup] l
+INNER JOIN base_LookupSet ls ON ls.LookupSetID = l.LookupSetID
+WHERE ls.LookupSetDescription ='Service Type'
+AND l.LookupDescription IN ('Farrier', 'Veterinary')
 
-UPDATE transKey_base_Strain
-SET ColorName = 'Red'
-WHERE ColorName = 'Magenta (Red)'
+--transKey_Service for only vet and Farrier (via inner join to those in transKey_ServiceType)
+INSERT INTO transKey_Service (GUID_ServiceID, ServiceName)
+SELECT s.ServiceID
+	, s.Notes
+FROM user_Service s
+INNER JOIN user_Horse h ON h.HorseID = s.HorseID
+INNER JOIN transKey_base_ServiceType st ON st.GUID_ServiceTypeID = s.ServiceTypeID
+WHERE ServiceDate > '1/1/2015'  -- Try 5 years worth 1st test: 86000+ rows
 
--- Assign Masculine and Feminine names to colors
-UPDATE transKey_base_Strain
-SET MasculineStrainName = 'Abbeyan Umm Jurays'
-, FeminineStrainName = 'Abbeyah Umm Jurays'
-WHERE INT_StrainID = 1
-
+--transKey_Breeding
+INSERT INTO transKey_Breeding (GUID_BreedingID, BreedingName)
+SELECT BreedingID
+, sire.HorseName + '-' + dam.HorseName
+FROM user_Breeding b
+INNER JOIN user_Horse sire ON sire.HorseID = b.StallionID
+INNER JOIN user_Horse dam ON dam.HorseID = b.HorseID
 
 */
-NEED TO ADD ENTRIES FOR RED ABCD and BLACK AB not just the single colors...
-UPDATE transKey_base_Strain
-SET MasculineStrainName = 'Abbeyan Umm Jurays'
-, FeminineStrainName = 'Abbeyah Umm Jurays'
-WHERE INT_StrainID = 4
-
-select *
-FROM transKey_base_Strain
-
 
 
 
