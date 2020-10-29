@@ -651,6 +651,23 @@ SELECT k.INT_HorseID AS HorseID
 	,h.UpdateUser
 	,h.UpdateTimestamp
 
+	,CASE 
+		WHEN Data1 LIKE '%Kuhaylan%' OR Data1 LIKE '%Kuhaylah%' THEN
+			CASE
+				WHEN Data1 LIKE '%Ajuz%' THEN (SELECT StrainID FROM transKey_base_Strain WHERE StrainCode = '1A')
+				WHEN Data1 LIKE '%Jellabi%' THEN (SELECT StrainID FROM transKey_base_Strain WHERE StrainCode = '1C')
+				WHEN Data1 LIKE '%Kurush%' THEN (SELECT StrainID FROM transKey_base_Strain WHERE StrainCode = '1D')
+				ELSE (SELECT StrainID FROM transKey_base_Strain WHERE StrainCode = '1B')
+			END
+		WHEN Data1 LIKE '%shahwan%' THEN (SELECT StrainID FROM transKey_base_Strain WHERE StrainCode = '2A')
+		WHEN Data1 LIKE '%Umm Jurays%' THEN (SELECT StrainID FROM transKey_base_Strain WHERE StrainCode = '3A')
+		WHEN Data1 LIKE '%Jidran%' THEN (SELECT StrainID FROM transKey_base_Strain WHERE StrainCode = '5A')
+		WHEN Data1 LIKE '%Enzahi%' THEN (SELECT StrainID FROM transKey_base_Strain WHERE StrainCode = '6A')
+		WHEN Data1 LIKE '%shuwey%' THEN (SELECT StrainID FROM transKey_base_Strain WHERE StrainCode = '7A')
+		WHEN Data1 LIKE '%Hamdani%' THEN (SELECT StrainID FROM transKey_base_Strain WHERE StrainCode = '7B')
+		ELSE NULL
+	END AS StrainID
+
 FROM transKey_Horse k
 INNER JOIN user_Horse h ON H.HorseID = k.GUID_HorseID
 LEFT OUTER JOIN transKey_base_LocalCode klc ON klc.GUID_LocalCodeID = h.LocalID
@@ -660,3 +677,8 @@ LEFT OUTER JOIN transKey_Horse sire ON sire.GUID_HorseID = h.SireID
 LEFT OUTER JOIN transKey_Horse dam ON dam.GUID_HorseID = h.DamID
 LEFT OUTER JOIN user_History hist ON hist.HorseID = h.HorseID
 LEFT OUTER JOIN user_Maintenance maint ON maint.HorseID = h.HorseID
+
+
+Sorting through Data2 for breed:
+select distinct data2 from user_horse
+where data2 like '%egy%' or data2 like'%ptian%'
