@@ -39,7 +39,9 @@ export_Client
 export_Horse 
     add ClientID FK
     add BreedID FK
-    add StrainID FK
+    DONE add StrainID FK
+    Do Not Bill
+    Not Bill Reason
     add legacy fields like DataX TitleX 
 
 export_Boarding 
