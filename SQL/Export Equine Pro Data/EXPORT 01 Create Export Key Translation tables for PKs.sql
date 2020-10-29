@@ -626,6 +626,7 @@ SELECT k.INT_HorseID AS HorseID
 -- From Source Tables
 	,h.HorseName
 	,h.RegistrationNumber
+	,maint.BandNumber
 	,klc.INT_LocalCodeID AS LocalCodeID
 	,h.Title1 AS Alert1
 	,h.Title2 AS Alert2
@@ -638,7 +639,17 @@ SELECT k.INT_HorseID AS HorseID
 	,h.DateDeceased AS DateDeceased
 	,sire.INT_HorseID AS SireID
 	,dam.INT_HorseID AS DamID
-
+	,h.Breeder
+	,h.Owner
+	,h.Catalog
+	,h.Imported
+	,h.BloodTyped AS DNA 
+	,h.FreezeMarked AS IDMarked
+	,h.DateSold
+	,hist.DateAcquired
+	,maint.[Location] AS legacy_MaintLocation
+	,h.UpdateUser
+	,h.UpdateTimestamp
 
 FROM transKey_Horse k
 INNER JOIN user_Horse h ON H.HorseID = k.GUID_HorseID
@@ -647,3 +658,5 @@ LEFT OUTER JOIN transKey_base_HorseColor khc ON khc.GUID_HorseColorID = h.ColorI
 LEFT OUTER JOIN transKey_base_Gender kg ON kg.GUID_GenderID = h.GenderID
 LEFT OUTER JOIN transKey_Horse sire ON sire.GUID_HorseID = h.SireID
 LEFT OUTER JOIN transKey_Horse dam ON dam.GUID_HorseID = h.DamID
+LEFT OUTER JOIN user_History hist ON hist.HorseID = h.HorseID
+LEFT OUTER JOIN user_Maintenance maint ON maint.HorseID = h.HorseID
