@@ -628,7 +628,7 @@ LEFT OUTER JOIN transKey_base_Country country ON country.GUID_CountryID = con.Co
 /*
 --Clean up misspellings for Straight Egyptian
 --SELECT Data2 FROM user_Horse
-UPDATE user_Horse SET Data2 = 'Straight Egyptian'
+--UPDATE user_Horse SET Data2 = 'Straight Egyptian'
 --Straight Egyptian
 WHERE Data2 IN
 (
@@ -651,14 +651,13 @@ WHERE Data2 IN
 ,'Egyptia;n'
 ,'DB-Arabia'
 ,'DB - Arabia'
-,'PUREBRED'
 )
 */
 
 /*
 --Clean up misspellings for Egyptian Related
 --SELECT Data2 FROM user_Horse
-UPDATE user_Horse SET Data2 = 'Egyptian Related'
+--UPDATE user_Horse SET Data2 = 'Egyptian Related'
 --Straight Egyptian
 WHERE Data2 IN
 --Egyptian Related:
@@ -676,15 +675,16 @@ WHERE Data2 IN
 ,'3/4 Egyptian'
 ,'Polish Egyptian'
 )
+*/
 
-LEFT OFF HERE, SCREWED BELOW STATEMENT UP set all horses to 'Straight Egyptian'  'Dahman Shahwan'
+/*
+-- Fix one record that had Data1 and Data2 switched
 
-select data1, data2 from user_Horse
+--select data1, data2 from user_Horse
 --UPDATE user_Horse SET Data2 = 'Straight Egyptian', Data1 = 'Dahman Shahwan'
 WHERE Data2 = 'Dahman Shahwan'
 */
 
-*/
 
 SELECT k.INT_HorseID AS HorseID
 -- From Source Tables
@@ -732,6 +732,13 @@ SELECT k.INT_HorseID AS HorseID
 		ELSE NULL
 	END AS StrainID
 
+	,CASE 
+		WHEN Data2 = 'Straight Egyptian' THEN (SELECT FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Straight Egyptian')
+		WHEN Data2 = 'Egyptian Related' THEN (SELECT FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Egyptian Related')
+		WHEN Data2 = 'Half Arabian' THEN (SELECT FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Half Arabian')
+		ELSE NULL
+	END AS HorseBreedID
+	
 FROM transKey_Horse k
 INNER JOIN user_Horse h ON H.HorseID = k.GUID_HorseID
 LEFT OUTER JOIN transKey_base_LocalCode klc ON klc.GUID_LocalCodeID = h.LocalID
@@ -741,5 +748,5 @@ LEFT OUTER JOIN transKey_Horse sire ON sire.GUID_HorseID = h.SireID
 LEFT OUTER JOIN transKey_Horse dam ON dam.GUID_HorseID = h.DamID
 LEFT OUTER JOIN user_History hist ON hist.HorseID = h.HorseID
 LEFT OUTER JOIN user_Maintenance maint ON maint.HorseID = h.HorseID
-
+--LEFT OUTER JOIN transKey_base_HorseBreed khb ON khb.HorseBreedName = h.Data2
 
