@@ -733,9 +733,9 @@ SELECT k.INT_HorseID AS HorseID
 	END AS StrainID
 
 	,CASE 
-		WHEN Data2 = 'Straight Egyptian' THEN (SELECT FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Straight Egyptian')
-		WHEN Data2 = 'Egyptian Related' THEN (SELECT FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Egyptian Related')
-		WHEN Data2 = 'Half Arabian' THEN (SELECT FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Half Arabian')
+		WHEN Data2 = 'Straight Egyptian' THEN (SELECT HorseBreedID FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Straight Egyptian')
+		WHEN Data2 = 'Egyptian Related' THEN (SELECT HorseBreedID FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Egyptian Related')
+		WHEN Data2 = 'Half Arabian' THEN (SELECT HorseBreedID FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Half Arabian')
 		ELSE NULL
 	END AS HorseBreedID
 	
