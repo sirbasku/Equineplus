@@ -748,5 +748,5 @@ LEFT OUTER JOIN transKey_Horse sire ON sire.GUID_HorseID = h.SireID
 LEFT OUTER JOIN transKey_Horse dam ON dam.GUID_HorseID = h.DamID
 LEFT OUTER JOIN user_History hist ON hist.HorseID = h.HorseID
 LEFT OUTER JOIN user_Maintenance maint ON maint.HorseID = h.HorseID
---LEFT OUTER JOIN transKey_base_HorseBreed khb ON khb.HorseBreedName = h.Data2
+
 
