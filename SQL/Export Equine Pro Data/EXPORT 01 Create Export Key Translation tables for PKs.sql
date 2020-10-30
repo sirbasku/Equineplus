@@ -620,6 +620,70 @@ LEFT OUTER JOIN user_Contact con ON con.ContactID = cl.ContactID
 LEFT OUTER JOIN transKey_base_State state ON state.GUID_StateID = con.StateID
 LEFT OUTER JOIN transKey_base_Country country ON country.GUID_CountryID = con.CountryID
 
+--Sorting through Data2 for breed:
+
+--select distinct data2 from user_horse
+--where data2 like '%egy%' or data2 like'%ptian%'
+
+/*
+--Clean up misspellings for Straight Egyptian
+--SELECT Data2 FROM user_Horse
+UPDATE user_Horse SET Data2 = 'Straight Egyptian'
+--Straight Egyptian
+WHERE Data2 IN
+(
+'Egyptian'
+,'Egptian'
+,'Egyptpian'
+,'Eguptian'
+,'Egyptina'
+,'Egypitan'
+,'Eagyptian'
+,'Egyptyian'
+,'Egytian'
+,'Egyptian Bred'
+,'Eygptian'
+,'Egyyptian'
+,'Egyptian ?'
+,'Egyptain'
+,'Egytpian'
+,'Egyptia'
+,'Egyptia;n'
+,'DB-Arabia'
+,'DB - Arabia'
+,'PUREBRED'
+)
+*/
+
+/*
+--Clean up misspellings for Egyptian Related
+--SELECT Data2 FROM user_Horse
+UPDATE user_Horse SET Data2 = 'Egyptian Related'
+--Straight Egyptian
+WHERE Data2 IN
+--Egyptian Related:
+(
+'Egyptian Related'
+,'1/2 Egyptian'
+,'1/4 Egyptian'
+,'7/8 Egyptian'
+,'1/2 Egytian'
+,'? Egyptian'
+,'1/2Egyptian'
+,'1/Egyptian'
+,'1/2/ Egyptian'
+,'1/4 Egyptian Bred'
+,'3/4 Egyptian'
+,'Polish Egyptian'
+)
+
+LEFT OFF HERE, SCREWED BELOW STATEMENT UP set all horses to 'Straight Egyptian'  'Dahman Shahwan'
+
+select data1, data2 from user_Horse
+--UPDATE user_Horse SET Data2 = 'Straight Egyptian', Data1 = 'Dahman Shahwan'
+WHERE Data2 = 'Dahman Shahwan'
+*/
+
 */
 
 SELECT k.INT_HorseID AS HorseID
@@ -679,6 +743,3 @@ LEFT OUTER JOIN user_History hist ON hist.HorseID = h.HorseID
 LEFT OUTER JOIN user_Maintenance maint ON maint.HorseID = h.HorseID
 
 
-Sorting through Data2 for breed:
-select distinct data2 from user_horse
-where data2 like '%egy%' or data2 like'%ptian%'
