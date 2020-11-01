@@ -34,6 +34,14 @@ export_base_Country
 --skip export_Contact for now, just add the primary contact fields to the client record in export 
 export_Client 
 
+transKey_Ownership
+export_Horse 
+    DECIDED TO KEEP CURRENT MANY TO MANY Ownership BETWEEN CLIENT AND HORSE TABLES add ClientID FK
+    DONE add BreedID FK
+    DONE add StrainID FK
+    DONE add legacy fields like DataX TitleX 
+
+
 ** LEFT OFF HERE , tables below are created now populating the transKey's 
 
 ======================================================================
@@ -83,16 +91,8 @@ ORDER BY h.HorseID
   SOO500 50%
   SMI200 50%
 
-
-
 ==================================================
-export_Horse 
-    DECIDED TO KEEP CURRENT MANY TO MANY Ownership BETWEEN CLIENT AND HORSE TABLES add ClientID FK
-    DONE add BreedID FK
-    DONE add StrainID FK
-    DONE add legacy fields like DataX TitleX 
 
-transKey_Ownership
 export_Ownership
 export_Boarding 
 export_Service 

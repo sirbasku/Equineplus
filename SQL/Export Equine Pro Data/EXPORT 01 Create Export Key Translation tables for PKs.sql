@@ -92,7 +92,7 @@ GO
 
 CREATE TABLE [dbo].[transKey_Ownership](
 	[GUID_OwnershipID] [uniqueidentifier] NOT NULL,
-	[INT_OwnershipID] [int] NOT NULL,
+	[INT_OwnershipID] [int] IDENTITY(1,1) NOT NULL,
 	[OwnershipName] [nvarchar](100) NULL,
  CONSTRAINT [PK_transKey_Ownership] PRIMARY KEY CLUSTERED 
 (
@@ -100,6 +100,14 @@ CREATE TABLE [dbo].[transKey_Ownership](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+
+INSERT INTO transKey_Ownership (GUID_OwnershipID, OwnershipName)
+SELECT o.OwnershipID AS GUID_OwnershipID
+,c.ClientCode + ' ' + h.HorseName AS OwnershipName
+FROM user_Ownership AS o
+LEFT OUTER JOIN user_Client AS c ON c.ClientID = o.ClientID
+LEFT OUTER JOIN user_Horse AS h ON h.HorseID = o.HorseID
+ORDER BY h.HorseName, c.ClientCode
 
 CREATE TABLE [dbo].[transKey_Boarding](
 	[GUID_BoardingID] [uniqueidentifier] NOT NULL,
@@ -710,36 +718,92 @@ WHERE Data2 IN
 --select data1, data2 from user_Horse
 --UPDATE user_Horse SET Data2 = 'Straight Egyptian', Data1 = 'Dahman Shahwan'
 WHERE Data2 = 'Dahman Shahwan'
-*/
 
+CREATE TABLE [dbo].[export_Horse](
+	[HorseID] [int] IDENTITY(1,1) NOT NULL,
+	[HorseName] [nvarchar](50) NOT NULL,
+	[RegistrationNumber] [nvarchar](22) NULL,
+	[BandNumber] [nvarchar](10) NULL,
+	[LocalCodeID] [int] NULL,
+	[HorseColorID] [int] NULL,
+	[GenderID] [int] NULL,
+	[HorseBreedID] [int] NULL,
+	[StrainID] [int] NULL,
+	[FoalDate] [nvarchar](8) NULL,
+	[DateDeceased] [nvarchar](8) NULL,
+	[DateSold] [date] NULL,
+	[DateAcquired] [date] NULL,
+	[SireID] [int] NULL,
+	[DamID] [int] NULL,
+	[Imported] [bit] NULL,
+	[DNA] [bit] NULL,
+	[IDMarked] [bit] NULL,
+	[Alert1] [nvarchar](50) NULL,
+	[Alert2] [nvarchar](50) NULL,
+	[Comments] [nvarchar](4000) NULL,
+	[Breeder] [nvarchar](50) NULL,
+	[Owner] [nvarchar](50) NULL,
+	[Catalog] [nvarchar](20) NULL,
+	[legacy_Data1] [nvarchar](50) NULL,
+	[legacy_Data2] [nvarchar](50) NULL,
+	[legacy_MaintLocation] [nvarchar](50) NULL,
+	[UpdateUser] [nvarchar](120) NULL,
+	[UpdateTimestamp] [datetime] NULL,
+ CONSTRAINT [PK_export_Horse] PRIMARY KEY CLUSTERED 
+(
+	[HorseID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+=========================================
+SET IDENTITY_INSERT export_Horse ON
+GO
+INSERT INTO export_Horse
+(
+	[HorseID]
+	,[HorseName]
+	,[RegistrationNumber]
+	,[BandNumber]
+	,[LocalCodeID]
+	,[HorseColorID]
+	,[GenderID]
+	,[HorseBreedID]
+	,[StrainID]
+	,[FoalDate]
+	,[DateDeceased]
+	,[DateSold]
+	,[DateAcquired]
+	,[SireID]
+	,[DamID]
+	,[Imported]
+	,[DNA]
+	,[IDMarked]
+	,[Alert1]
+	,[Alert2]
+	,[Comments]
+	,[Breeder]
+	,[Owner]
+	,[Catalog]
+	,[legacy_Data1]
+	,[legacy_Data2]
+	,[legacy_MaintLocation]
+	,[UpdateUser]
+	,[UpdateTimestamp]
+)
 SELECT k.INT_HorseID AS HorseID
 -- From Source Tables
 	,h.HorseName
 	,h.RegistrationNumber
 	,maint.BandNumber
 	,klc.INT_LocalCodeID AS LocalCodeID
-	,h.Title1 AS Alert1
-	,h.Title2 AS Alert2
-	,h.Data1 AS legacy_Data1
-	,h.Data2 AS legacy_Data2
-	,TRIM(ISNULL(h.Comment,'')) + ' ' + TRIM(CONVERT(NVARCHAR(4000), SUBSTRING(ISNULL(h.Comments,''), 1, 4000))) AS Comments
 	,khc.INT_HorseColorID AS HorseColorID
 	,kg.INT_GenderID AS GenderID
-	,h.DateBorn AS FoalDate
-	,h.DateDeceased AS DateDeceased
-	,sire.INT_HorseID AS SireID
-	,dam.INT_HorseID AS DamID
-	,h.Breeder
-	,h.Owner
-	,h.Catalog
-	,h.Imported
-	,h.BloodTyped AS DNA 
-	,h.FreezeMarked AS IDMarked
-	,h.DateSold
-	--,hist.DateAcquired
-	,maint.[Location] AS legacy_MaintLocation
-	,h.UpdateUser
-	,h.UpdateTimestamp
+	,CASE 
+		WHEN Data2 = 'Straight Egyptian' THEN (SELECT HorseBreedID FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Straight Egyptian')
+		WHEN Data2 = 'Egyptian Related' THEN (SELECT HorseBreedID FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Egyptian Related')
+		WHEN Data2 = 'Half Arabian' THEN (SELECT HorseBreedID FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Half Arabian')
+		ELSE NULL
+	END AS HorseBreedID
 
 	,CASE 
 		WHEN Data1 LIKE '%Kuhaylan%' OR Data1 LIKE '%Kuhaylah%' THEN
@@ -757,13 +821,26 @@ SELECT k.INT_HorseID AS HorseID
 		WHEN Data1 LIKE '%Hamdani%' THEN (SELECT StrainID FROM transKey_base_Strain WHERE StrainCode = '7B')
 		ELSE NULL
 	END AS StrainID
-
-	,CASE 
-		WHEN Data2 = 'Straight Egyptian' THEN (SELECT HorseBreedID FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Straight Egyptian')
-		WHEN Data2 = 'Egyptian Related' THEN (SELECT HorseBreedID FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Egyptian Related')
-		WHEN Data2 = 'Half Arabian' THEN (SELECT HorseBreedID FROM transKey_base_HorseBreed WHERE HorseBreedName = 'Half Arabian')
-		ELSE NULL
-	END AS HorseBreedID
+	,h.DateBorn AS FoalDate
+	,h.DateDeceased AS DateDeceased
+	,CONVERT(Date, h.DateSold) AS DateSold
+	,CONVERT(Date, hist.DateAcquired) AS DateAcquired
+	,sire.INT_HorseID AS SireID
+	,dam.INT_HorseID AS DamID
+	,h.Imported
+	,h.BloodTyped AS DNA 
+	,h.FreezeMarked AS IDMarked
+	,h.Title1 AS Alert1
+	,h.Title2 AS Alert2
+	,TRIM(ISNULL(h.Comment,'')) + ' ' + TRIM(CONVERT(NVARCHAR(4000), SUBSTRING(ISNULL(h.Comments,''), 1, 4000))) AS Comments
+	,h.Breeder
+	,h.Owner
+	,h.Catalog
+	,h.Data1 AS legacy_Data1
+	,h.Data2 AS legacy_Data2
+	,maint.[Location] AS legacy_MaintLocation
+	,h.UpdateUser
+	,h.UpdateTimestamp
 	
 FROM transKey_Horse k
 INNER JOIN user_Horse h ON H.HorseID = k.GUID_HorseID
@@ -772,6 +849,8 @@ LEFT OUTER JOIN transKey_base_HorseColor khc ON khc.GUID_HorseColorID = h.ColorI
 LEFT OUTER JOIN transKey_base_Gender kg ON kg.GUID_GenderID = h.GenderID
 LEFT OUTER JOIN transKey_Horse sire ON sire.GUID_HorseID = h.SireID
 LEFT OUTER JOIN transKey_Horse dam ON dam.GUID_HorseID = h.DamID
---LEFT OUTER JOIN user_History hist ON hist.HorseID = h.HorseID
+LEFT OUTER JOIN user_History hist ON hist.HorseID = h.HorseID
 LEFT OUTER JOIN user_Maintenance maint ON maint.HorseID = h.HorseID
+
+*/
 
