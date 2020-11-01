@@ -640,7 +640,7 @@ LEFT OUTER JOIN transKey_base_State state ON state.GUID_StateID = con.StateID
 LEFT OUTER JOIN transKey_base_Country country ON country.GUID_CountryID = con.CountryID
 
 CREATE TABLE [dbo].[export_Ownership](
-	[OwnershipID] [int] NOT NULL,
+	[OwnershipID] [int] IDENTITY(1,1) NOT NULL,
 	[HorseID] [int] NOT NULL,
 	[ClientID] [int] NOT NULL,
 	[Percentage] [numeric](18, 2) NULL,
@@ -852,7 +852,8 @@ LEFT OUTER JOIN transKey_Horse dam ON dam.GUID_HorseID = h.DamID
 LEFT OUTER JOIN user_History hist ON hist.HorseID = h.HorseID
 LEFT OUTER JOIN user_Maintenance maint ON maint.HorseID = h.HorseID
 
-
+SET IDENTITY_INSERT export_Ownership ON
+GO
 INSERT INTO export_Ownership
 (OwnershipID
 ,HorseID
