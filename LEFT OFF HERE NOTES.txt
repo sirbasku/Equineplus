@@ -87,13 +87,13 @@ ORDER BY h.HorseID
 
 ==================================================
 export_Horse 
-    add ClientID FK
+    DECIDED TO KEEP CURRENT MANY TO MANY Ownership BETWEEN CLIENT AND HORSE TABLES add ClientID FK
     DONE add BreedID FK
     DONE add StrainID FK
-    Do Not Bill
-    Not Bill Reason
-    add legacy fields like DataX TitleX 
+    DONE add legacy fields like DataX TitleX 
 
+transKey_Ownership
+export_Ownership
 export_Boarding 
 export_Service 
 export_Breeding 

@@ -90,6 +90,17 @@ CREATE TABLE [dbo].[transKey_Client](
 ) ON [PRIMARY]
 GO
 
+CREATE TABLE [dbo].[transKey_Ownership](
+	[GUID_OwnershipID] [uniqueidentifier] NOT NULL,
+	[INT_OwnershipID] [int] NOT NULL,
+	[OwnershipName] [nvarchar](100) NULL,
+ CONSTRAINT [PK_transKey_Ownership] PRIMARY KEY CLUSTERED 
+(
+	[GUID_OwnershipID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
 CREATE TABLE [dbo].[transKey_Boarding](
 	[GUID_BoardingID] [uniqueidentifier] NOT NULL,
 	[INT_BoardingID] [int] IDENTITY(1,1) NOT NULL,
@@ -620,6 +631,22 @@ LEFT OUTER JOIN user_Contact con ON con.ContactID = cl.ContactID
 LEFT OUTER JOIN transKey_base_State state ON state.GUID_StateID = con.StateID
 LEFT OUTER JOIN transKey_base_Country country ON country.GUID_CountryID = con.CountryID
 
+CREATE TABLE [dbo].[export_Ownership](
+	[OwnershipID] [int] NOT NULL,
+	[HorseID] [int] NOT NULL,
+	[ClientID] [int] NOT NULL,
+	[Percentage] [numeric](18, 2) NULL,
+	[LastStatementDate] [datetime] NULL,
+	[Comments] [ntext] NULL,
+	[UpdateUser] [nvarchar](120) NULL,
+	[UpdateTimestamp] [datetime] NULL,
+ CONSTRAINT [PK_export_Ownership] PRIMARY KEY CLUSTERED 
+(
+	[OwnershipID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
 --Sorting through Data2 for breed:
 
 --select distinct data2 from user_horse
@@ -685,7 +712,6 @@ WHERE Data2 IN
 WHERE Data2 = 'Dahman Shahwan'
 */
 
-
 SELECT k.INT_HorseID AS HorseID
 -- From Source Tables
 	,h.HorseName
@@ -696,7 +722,7 @@ SELECT k.INT_HorseID AS HorseID
 	,h.Title2 AS Alert2
 	,h.Data1 AS legacy_Data1
 	,h.Data2 AS legacy_Data2
-	,TRIM(ISNULL(h.Comment,'')) + ' ' + TRIM(CONVERT(VARCHAR(8000), SUBSTRING(ISNULL(h.Comments,''), 1, 8000))) AS Comments
+	,TRIM(ISNULL(h.Comment,'')) + ' ' + TRIM(CONVERT(NVARCHAR(4000), SUBSTRING(ISNULL(h.Comments,''), 1, 4000))) AS Comments
 	,khc.INT_HorseColorID AS HorseColorID
 	,kg.INT_GenderID AS GenderID
 	,h.DateBorn AS FoalDate
@@ -710,7 +736,7 @@ SELECT k.INT_HorseID AS HorseID
 	,h.BloodTyped AS DNA 
 	,h.FreezeMarked AS IDMarked
 	,h.DateSold
-	,hist.DateAcquired
+	--,hist.DateAcquired
 	,maint.[Location] AS legacy_MaintLocation
 	,h.UpdateUser
 	,h.UpdateTimestamp
@@ -746,7 +772,6 @@ LEFT OUTER JOIN transKey_base_HorseColor khc ON khc.GUID_HorseColorID = h.ColorI
 LEFT OUTER JOIN transKey_base_Gender kg ON kg.GUID_GenderID = h.GenderID
 LEFT OUTER JOIN transKey_Horse sire ON sire.GUID_HorseID = h.SireID
 LEFT OUTER JOIN transKey_Horse dam ON dam.GUID_HorseID = h.DamID
-LEFT OUTER JOIN user_History hist ON hist.HorseID = h.HorseID
+--LEFT OUTER JOIN user_History hist ON hist.HorseID = h.HorseID
 LEFT OUTER JOIN user_Maintenance maint ON maint.HorseID = h.HorseID
-
 
