@@ -42,10 +42,8 @@ export_Horse
     DONE add legacy fields like DataX TitleX 
 export_Ownership
 
-** LEFT OFF HERE , tables below are created now populating the transKey's 
-
 ======================================================================
-working on Client Relationship to Horse, might be better to keep existing Many to Many, for 100% it is just a join from Client to many to horse.  Also same if in partnership...
+-- Get weird ownership data to go over with team:
 
 SELECT h.HorseName, h.HorseID, c.ClientCode, c.ClientID, o.Percentage, (SELECT COUNT(*) FROM user_Ownership WHERE HorseID = h.HorseID) AS OwnershipRecords
 FROM user_Horse h
@@ -90,8 +88,9 @@ ORDER BY h.HorseID
 '2020 LADY SINAN RCA FILLY'
   SOO500 50%
   SMI200 50%
-
 ==================================================
+
+** LEFT OFF HERE , tables below are created now populating the transKey's 
 
 export_Boarding 
 export_Service 
