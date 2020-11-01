@@ -96,6 +96,10 @@ export_Boarding
 export_Service 
 export_Breeding 
 
+Create export database diagram and foreign keys
+Script foreign key creates
+
+
 *** Then create in target system 
 
 Base_ tables 
