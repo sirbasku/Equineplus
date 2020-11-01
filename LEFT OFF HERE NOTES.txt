@@ -40,7 +40,7 @@ export_Horse
     DONE add BreedID FK
     DONE add StrainID FK
     DONE add legacy fields like DataX TitleX 
-
+export_Ownership
 
 ** LEFT OFF HERE , tables below are created now populating the transKey's 
 
@@ -93,7 +93,6 @@ ORDER BY h.HorseID
 
 ==================================================
 
-export_Ownership
 export_Boarding 
 export_Service 
 export_Breeding 

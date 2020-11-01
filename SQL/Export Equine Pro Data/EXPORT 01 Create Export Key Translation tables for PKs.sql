@@ -645,14 +645,14 @@ CREATE TABLE [dbo].[export_Ownership](
 	[ClientID] [int] NOT NULL,
 	[Percentage] [numeric](18, 2) NULL,
 	[LastStatementDate] [datetime] NULL,
-	[Comments] [ntext] NULL,
+	[Comments] [nvarchar](4000) NULL,
 	[UpdateUser] [nvarchar](120) NULL,
 	[UpdateTimestamp] [datetime] NULL,
  CONSTRAINT [PK_export_Ownership] PRIMARY KEY CLUSTERED 
 (
 	[OwnershipID] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+) ON [PRIMARY]
 GO
 
 --Sorting through Data2 for breed:
@@ -851,6 +851,31 @@ LEFT OUTER JOIN transKey_Horse sire ON sire.GUID_HorseID = h.SireID
 LEFT OUTER JOIN transKey_Horse dam ON dam.GUID_HorseID = h.DamID
 LEFT OUTER JOIN user_History hist ON hist.HorseID = h.HorseID
 LEFT OUTER JOIN user_Maintenance maint ON maint.HorseID = h.HorseID
+
+
+INSERT INTO export_Ownership
+(OwnershipID
+,HorseID
+,ClientID
+,[Percentage]
+,LastStatementDate
+,Comments
+,UpdateUser
+,UpdateTimestamp
+)
+SELECT ko.INT_OwnershipID AS OwnershipID
+,kh.INT_HorseID AS HorseID
+,kc.INT_ClientID AS ClientID
+,o.[Percentage]
+,o.LastStatementDate
+,TRIM(CONVERT(NVARCHAR(4000), SUBSTRING(ISNULL(o.Comments,''), 1, 4000))) AS Comments
+,o.UpdateUser
+,o.UpdateTimestamp
+
+FROM transKey_Ownership AS ko
+INNER JOIN user_Ownership o ON o.OwnershipID = ko.GUID_OwnershipID
+LEFT OUTER JOIN transKey_Client kc ON kc.GUID_ClientID = o.ClientID
+LEFT OUTER JOIN transKey_Horse kh ON kh.GUID_HorseID = o.HorseID
 
 */
 
